@@ -25,6 +25,9 @@ test-results/
 # Données réelles : jamais versionnées
 donnees-reelles/
 
+# Jeu synthétique : regénéré par `pnpm generer:jeu`
+donnees-synthetiques/
+
 # Éditeurs et OS
 .vscode/*
 !.vscode/extensions.json

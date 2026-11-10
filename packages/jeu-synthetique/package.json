@@ -1,0 +1,24 @@
+{
+  "name": "@findandfill/jeu-synthetique",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Génère un jeu de fichiers comptables fictifs et réalistes (sources, gabarits de reporting, résultats attendus).",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "generer": "tsx src/cli.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "exceljs": "^4.4.0",
+    "jszip": "^3.10.2"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "tsx": "^4.23.15"
+  }
+}
