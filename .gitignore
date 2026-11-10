@@ -1,0 +1,39 @@
+# Dépendances
+node_modules/
+.pnpm-store/
+
+# Builds et artefacts
+dist/
+out/
+build/
+release/
+*.tsbuildinfo
+coverage/
+reports/
+.stryker-tmp/
+playwright-report/
+test-results/
+
+# Environnement et secrets
+.env
+.env.*
+!.env.example
+
+# Fichiers Excel temporaires / verrous
+~$*
+
+# Données réelles : jamais versionnées
+donnees-reelles/
+
+# Éditeurs et OS
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Journaux
+*.log
+npm-debug.log*
+pnpm-debug.log*
