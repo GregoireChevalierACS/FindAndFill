@@ -33,6 +33,44 @@ importers:
         specifier: ^5.1.0
         version: 5.1.0(@types/node@24.19.2)(@vitest/coverage-v8@5.1.0)(vite@8.3.7(@types/node@24.19.2)(esbuild@0.28.2)(tsx@4.23.15))
 
+  packages/adapters-fichiers:
+    dependencies:
+      '@findandfill/application':
+        specifier: workspace:*
+        version: link:../application
+      '@findandfill/domain':
+        specifier: workspace:*
+        version: link:../domain
+      exceljs:
+        specifier: ^4.4.0
+        version: 4.4.0
+      jszip:
+        specifier: ^3.10.2
+        version: 3.10.2
+    devDependencies:
+      '@findandfill/jeu-synthetique':
+        specifier: workspace:*
+        version: link:../jeu-synthetique
+      '@types/node':
+        specifier: ^24.19.2
+        version: 24.19.2
+
+  packages/application:
+    dependencies:
+      '@findandfill/domain':
+        specifier: workspace:*
+        version: link:../domain
+    devDependencies:
+      '@stryker-mutator/core':
+        specifier: ^10.1.1
+        version: 10.1.1(@types/node@24.19.2)
+      '@stryker-mutator/typescript-checker':
+        specifier: ^10.1.1
+        version: 10.1.1(@stryker-mutator/core@10.1.1(@types/node@24.19.2))(typescript@6.0.3)
+      '@stryker-mutator/vitest-runner':
+        specifier: ^10.1.1
+        version: 10.1.1(@stryker-mutator/core@10.1.1(@types/node@24.19.2))(vitest@5.1.0)
+
   packages/domain:
     devDependencies:
       '@stryker-mutator/core':
@@ -47,6 +85,9 @@ importers:
 
   packages/jeu-synthetique:
     dependencies:
+      '@findandfill/domain':
+        specifier: workspace:*
+        version: link:../domain
       exceljs:
         specifier: ^4.4.0
         version: 4.4.0

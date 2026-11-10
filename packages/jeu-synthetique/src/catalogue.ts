@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import type { ModeleRemplissage } from '@findandfill/domain';
 import {
   attendusAchats,
   attendusCa,
@@ -9,6 +10,7 @@ import {
 import { genererFec, nomFichierFec } from './fec.js';
 import { genererGabarit } from './gabarit.js';
 import { genererJeu, SOCIETE } from './modele.js';
+import { MODELES_DE_REFERENCE } from './modeles.js';
 import {
   COLONNE_AJOUTEE_VENTES,
   exporterAchats,
@@ -40,14 +42,19 @@ export type Cas =
       readonly id: string;
       readonly type: 'remplissage';
       readonly description: string;
-      readonly sources: readonly string[];
+      /** Fichier à fournir pour chaque source du modèle, par identifiant de source. */
+      readonly sources: Readonly<Record<string, string>>;
       readonly gabarit: string;
+      readonly modele: string;
       readonly attendu: string;
     }
   | {
       readonly id: string;
       readonly type: 'changement-structure';
       readonly description: string;
+      /** Modèle configuré sur la source de référence, qui doit refuser la variante. */
+      readonly modele: string;
+      readonly idSource: string;
       readonly reference: string;
       readonly source: string;
       readonly changement:
@@ -83,13 +90,33 @@ function cheminAttendu(id: string): string {
   return `attendus/${id}.json`;
 }
 
+function cheminModele(id: string): string {
+  return `modeles/${id}.json`;
+}
+
 function remplissage(
   id: string,
   description: string,
-  sources: readonly string[],
+  sources: Readonly<Record<string, string>>,
   gabarit: string,
 ): Cas {
-  return { id, type: 'remplissage', description, sources, gabarit, attendu: cheminAttendu(id) };
+  return {
+    id,
+    type: 'remplissage',
+    description,
+    sources,
+    gabarit,
+    modele: cheminModele(id),
+    attendu: cheminAttendu(id),
+  };
+}
+
+function modeleDeReference(id: string): ModeleRemplissage {
+  const modele = MODELES_DE_REFERENCE[id];
+  if (modele === undefined) {
+    throw new Error(`Aucun modèle de référence pour le cas « ${id} ».`);
+  }
+  return modele;
 }
 
 /** Génère tous les fichiers du jeu synthétique, en mémoire. */
@@ -111,7 +138,7 @@ export async function genererJeuComplet(graine = GRAINE_PAR_DEFAUT): Promise<{
       cas: remplissage(
         'ca-par-affaire',
         "CA HT mensuel par affaire depuis l'export Excel des ventes.",
-        [CHEMINS.ventes],
+        { ventes: CHEMINS.ventes },
         CHEMINS.gabarit,
       ),
       cellules: cellules.ca,
@@ -120,7 +147,7 @@ export async function genererJeuComplet(graine = GRAINE_PAR_DEFAUT): Promise<{
       cas: remplissage(
         'carnet-commandes',
         'Commandé et facturé par affaire depuis le carnet de commandes.',
-        [CHEMINS.carnet],
+        { carnet: CHEMINS.carnet },
         CHEMINS.gabarit,
       ),
       cellules: cellules.carnet,
@@ -129,7 +156,7 @@ export async function genererJeuComplet(graine = GRAINE_PAR_DEFAUT): Promise<{
       cas: remplissage(
         'tresorerie',
         'Solde initial, encaissements et décaissements mensuels du compte 512000 depuis le FEC.',
-        [CHEMINS.fec],
+        { fec: CHEMINS.fec },
         CHEMINS.gabarit,
       ),
       cellules: cellules.tresorerie,
@@ -138,7 +165,7 @@ export async function genererJeuComplet(graine = GRAINE_PAR_DEFAUT): Promise<{
       cas: remplissage(
         'achats-par-fournisseur',
         'Achats HT mensuels par fournisseur depuis le CSV des achats.',
-        [CHEMINS.achats],
+        { achats: CHEMINS.achats },
         CHEMINS.gabarit,
       ),
       cellules: cellules.achats,
@@ -147,7 +174,7 @@ export async function genererJeuComplet(graine = GRAINE_PAR_DEFAUT): Promise<{
       cas: remplissage(
         'ca-par-affaire-macros',
         'Même remplissage que « ca-par-affaire », dans le gabarit avec macros : le projet VBA doit rester intact.',
-        [CHEMINS.ventes],
+        { ventes: CHEMINS.ventes },
         CHEMINS.gabaritMacros,
       ),
       cellules: cellules.ca,
@@ -156,7 +183,12 @@ export async function genererJeuComplet(graine = GRAINE_PAR_DEFAUT): Promise<{
       cas: remplissage(
         'reporting-complet-macros',
         'Les quatre onglets du reporting depuis toutes les sources, dans le gabarit avec macros.',
-        [CHEMINS.ventes, CHEMINS.carnet, CHEMINS.fec, CHEMINS.achats],
+        {
+          ventes: CHEMINS.ventes,
+          carnet: CHEMINS.carnet,
+          fec: CHEMINS.fec,
+          achats: CHEMINS.achats,
+        },
         CHEMINS.gabaritMacros,
       ),
       cellules: [...cellules.ca, ...cellules.carnet, ...cellules.tresorerie, ...cellules.achats],
@@ -166,6 +198,8 @@ export async function genererJeuComplet(graine = GRAINE_PAR_DEFAUT): Promise<{
         id: 'variante-colonne-ajoutee',
         type: 'changement-structure',
         description: "Une colonne « Commercial » apparaît dans l'export des ventes.",
+        modele: cheminModele('ca-par-affaire'),
+        idSource: 'ventes',
         reference: CHEMINS.ventes,
         source: CHEMINS.ventesColonneAjoutee,
         changement: { nature: 'colonne-ajoutee', colonne: COLONNE_AJOUTEE_VENTES },
@@ -176,6 +210,8 @@ export async function genererJeuComplet(graine = GRAINE_PAR_DEFAUT): Promise<{
         id: 'variante-onglet-renomme',
         type: 'changement-structure',
         description: "L'onglet du carnet de commandes a été renommé.",
+        modele: cheminModele('carnet-commandes'),
+        idSource: 'carnet',
         reference: CHEMINS.carnet,
         source: CHEMINS.carnetOngletRenomme,
         changement: {
@@ -190,6 +226,8 @@ export async function genererJeuComplet(graine = GRAINE_PAR_DEFAUT): Promise<{
         id: 'variante-colonnes-deplacees',
         type: 'changement-structure',
         description: "Les colonnes de montants du CSV des achats ont changé d'ordre.",
+        modele: cheminModele('achats-par-fournisseur'),
+        idSource: 'achats',
         reference: CHEMINS.achats,
         source: CHEMINS.achatsColonnesDeplacees,
         changement: { nature: 'colonnes-deplacees' },
@@ -226,6 +264,7 @@ export async function genererJeuComplet(graine = GRAINE_PAR_DEFAUT): Promise<{
               chemin: unCas.attendu,
               contenu: json({ cas: unCas.id, gabarit: unCas.gabarit, cellules: attendues }),
             },
+            { chemin: unCas.modele, contenu: json(modeleDeReference(unCas.id)) },
           ]
         : [],
     ),

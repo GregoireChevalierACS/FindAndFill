@@ -38,3 +38,18 @@ export function lireMontant(texte: string): Centimes | null {
   }
   return centimes(signe === '-' ? 0 - valeurAbsolue : valeurAbsolue);
 }
+
+/**
+ * Montant d'une cellule : nombre en unités (1234.56 €) ou texte (« 1 234,56 »).
+ * Une cellule vide vaut zéro. Renvoie `null` si la valeur n'est pas un montant.
+ */
+export function montantDeCellule(valeur: string | number | null): Centimes | null {
+  if (valeur === null) {
+    return centimes(0);
+  }
+  if (typeof valeur === 'number') {
+    const enCentimes = Math.round(valeur * 100);
+    return Number.isSafeInteger(enCentimes) ? centimes(enCentimes + 0) : null;
+  }
+  return valeur.trim() === '' ? centimes(0) : lireMontant(valeur);
+}

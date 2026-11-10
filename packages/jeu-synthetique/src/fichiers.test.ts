@@ -367,8 +367,8 @@ describe('catalogue', () => {
     for (const cas of manifeste.cas) {
       const chemins =
         cas.type === 'remplissage'
-          ? [...cas.sources, cas.gabarit, cas.attendu]
-          : [cas.reference, cas.source];
+          ? [...Object.values(cas.sources), cas.gabarit, cas.modele, cas.attendu]
+          : [cas.modele, cas.reference, cas.source];
       for (const chemin of chemins) {
         expect(fichiers.has(chemin), `${cas.id} → ${chemin}`).toBe(true);
       }

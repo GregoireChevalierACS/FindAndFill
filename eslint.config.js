@@ -40,4 +40,22 @@ export default tseslint.config(
       ],
     },
   },
+  {
+    // La couche application ne connaît que le domaine ; la technique passe par les ports.
+    files: ['packages/application/src/**/*.ts'],
+    ignores: ['**/*.test.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              regex: '^(?![.]{1,2}/|@findandfill/domain$)',
+              message: 'L’application ne dépend que du domaine et de ses propres ports.',
+            },
+          ],
+        },
+      ],
+    },
+  },
 );

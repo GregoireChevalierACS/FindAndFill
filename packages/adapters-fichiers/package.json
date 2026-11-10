@@ -1,0 +1,25 @@
+{
+  "name": "@findandfill/adapters-fichiers",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Adapters de fichiers : lecture Excel/CSV/FEC et écriture de gabarits Excel par retouche du XML.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@findandfill/application": "workspace:*",
+    "@findandfill/domain": "workspace:*",
+    "exceljs": "^4.4.0",
+    "jszip": "^3.10.2"
+  },
+  "devDependencies": {
+    "@findandfill/jeu-synthetique": "workspace:*",
+    "@types/node": "^24.19.2"
+  }
+}

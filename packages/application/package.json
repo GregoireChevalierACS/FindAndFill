@@ -1,0 +1,24 @@
+{
+  "name": "@findandfill/application",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Cas d'usage : orchestrent le domaine à travers des ports, sans dépendre d'aucune technique.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:mutation": "stryker run"
+  },
+  "dependencies": {
+    "@findandfill/domain": "workspace:*"
+  },
+  "devDependencies": {
+    "@stryker-mutator/core": "^10.1.1",
+    "@stryker-mutator/typescript-checker": "^10.1.1",
+    "@stryker-mutator/vitest-runner": "^10.1.1"
+  }
+}
