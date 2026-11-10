@@ -1,0 +1,10 @@
+packages:
+  - packages/*
+  - apps/*
+
+onlyBuiltDependencies:
+  - esbuild
+
+# Une seule version de TypeScript : typescript-eslint et Stryker ne gèrent pas encore TypeScript 7 (natif).
+overrides:
+  typescript: ~6.0.0
