@@ -1,0 +1,40 @@
+import js from '@eslint/js';
+import tseslint from 'typescript-eslint';
+
+export default tseslint.config(
+  {
+    ignores: ['**/dist/**', '**/coverage/**', '**/reports/**', '**/.stryker-tmp/**'],
+  },
+  js.configs.recommended,
+  ...tseslint.configs.strictTypeChecked,
+  {
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
+  {
+    files: ['**/*.js', '**/*.config.ts'],
+    ...tseslint.configs.disableTypeChecked,
+  },
+  {
+    // Le domaine ne dépend de rien d'extérieur : seuls les imports relatifs sont permis.
+    files: ['packages/domain/src/**/*.ts'],
+    ignores: ['**/*.test.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              regex: '^(?![.]{1,2}/)',
+              message: 'Le domaine ne doit dépendre d’aucune bibliothèque ni d’aucun module Node.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+);
