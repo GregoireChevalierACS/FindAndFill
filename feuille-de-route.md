@@ -70,8 +70,21 @@ Sans fichiers réels, on fabrique un jeu de test crédible pour une ETI industri
 
 Le besoin le plus visible : remplir les fichiers de reporting à partir des exports existants.
 
-- Lecture Excel/CSV, éditeur de modèle (choix des cellules source et cible), écriture par patch XML, aperçu, piste d'audit.
-- **Terminée quand** : la CI passe (100 % / mutation ≥ 80 %), tous les couples du jeu synthétique sont reproduits à l'identique, macros intactes, et chaque variante de structure est détectée.
+#### 1a — Moteur de remplissage ✅
+
+- [x] Domaine : modèle de remplissage (sources désignées par en-têtes, règles `mensuel-par-cle`, `mensuel`, `par-cle`, `total`, filtres, débit − crédit), lecture des dates et montants français, repérage du tableau sous les titres.
+- [x] Détection des changements de structure : onglet introuvable, colonnes ajoutées, supprimées ou déplacées. Le remplissage est alors bloqué, jamais deviné.
+- [x] Aperçu avant écriture : cas d'usage `preparerRemplissage` → cellules, avertissements (clé absente du gabarit, ligne hors exercice) et provenance de chaque valeur (règle, source, lignes) ; l'écriture n'a lieu qu'à la confirmation.
+- [x] Adapters : lecture Excel (`.xlsx`, `.xlsm`), CSV/TSV/FEC (séparateur détecté, UTF-8 ou Windows-1252) ; écriture du gabarit par retouche du XML des seules cellules visées (styles hérités de la ligne ou de la colonne, formules refusées, recalcul forcé à l'ouverture).
+- [x] Recette sur le jeu synthétique : les 6 cas reproduits au centime (373 cellules pour le cas complet, recoupées aussi avec openpyxl), formules et projet VBA intacts, les 3 variantes bloquées avec le bon diagnostic.
+
+#### 1b — Application de bureau
+
+- [ ] Electron + React : choix des fichiers, aperçu des cellules avec leur provenance, confirmation, enregistrement du gabarit rempli.
+- [ ] Éditeur de modèle : choisir les colonnes sources et les cellules cibles, enregistrer le modèle.
+- [ ] Message clair pour chaque erreur et avertissement, avec la marche à suivre.
+
+- **Terminée quand** : la CI passe (100 % / mutation ≥ 80 %), tous les couples du jeu synthétique sont reproduits à l'identique, macros intactes, et chaque variante de structure est détectée — **atteint par le moteur** ; reste à le rendre utilisable sans ligne de commande (1b).
 
 ### Phase 2 — Démo et essai réel chez Mecatherm
 

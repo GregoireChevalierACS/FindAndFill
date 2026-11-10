@@ -16,10 +16,12 @@ pnpm test:mutation   # tests de mutation du domaine
 pnpm generer:jeu     # jeu de données synthétique dans donnees-synthetiques/
 ```
 
-| Paquet                                               | Rôle                                                     |
-| ---------------------------------------------------- | -------------------------------------------------------- |
-| [packages/domain](packages/domain)                   | Règles métier pures, sans aucune dépendance              |
-| [packages/jeu-synthetique](packages/jeu-synthetique) | Générateur de fichiers comptables fictifs pour les tests |
+| Paquet                                                   | Rôle                                                                                                        |
+| -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| [packages/domain](packages/domain)                       | Règles métier pures, sans aucune dépendance : montants, dates, repérage des tableaux, calcul du remplissage |
+| [packages/application](packages/application)             | Cas d'usage et ports (contrats des adapters)                                                                |
+| [packages/adapters-fichiers](packages/adapters-fichiers) | Lecture Excel/CSV/FEC, écriture des gabarits Excel par retouche du XML                                      |
+| [packages/jeu-synthetique](packages/jeu-synthetique)     | Générateur de fichiers comptables fictifs et modèles de référence pour la recette                           |
 
 ## Contribuer
 
