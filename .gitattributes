@@ -3,5 +3,6 @@
 *.xlsm binary
 *.xls binary
 *.pdf binary
+*.bin binary
 *.png binary
 *.ico binary

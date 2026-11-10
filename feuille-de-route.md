@@ -53,15 +53,18 @@ Un modèle décrit une transformation réutilisable : source(s) → règles → 
 
 ## Phases
 
-### Phase 0 — Jeu de données synthétique
+### Phase 0 — Jeu de données synthétique ✅
 
-Sans fichiers réels, on fabrique un jeu de test crédible pour une ETI industrielle qui vend des lignes de production à l'international :
+Sans fichiers réels, on fabrique un jeu de test crédible pour une ETI industrielle qui vend des lignes de production à l'international. Détails : [packages/jeu-synthetique](packages/jeu-synthetique/README.md).
 
-- Exports « ERP » fictifs : grand livre, balance, ventes par affaire, carnet de commandes, achats fournisseurs, en EUR et devises.
-- Fichiers de reporting direction `.xlsm` avec macros, formules, onglets mensuels : CA et marge par affaire, carnet de commandes, trésorerie, suivi des coûts projet.
-- Variantes « structure modifiée » (colonne ajoutée, onglet renommé) pour tester la détection de changement.
-- Un script génère ces fichiers de façon reproductible ; les résultats attendus sont écrits à la main une fois.
-- **Terminée quand** : au moins 5 couples source → reporting attendu, dont 2 avec macros, et 3 variantes de structure.
+- [x] Sources fictives : export Excel des ventes par affaire, carnet de commandes, CSV des achats, FEC ; en EUR, USD et GBP.
+- [x] Gabarit de reporting direction (`.xlsx` et `.xlsm` avec projet VBA) : CA par affaire, carnet de commandes, trésorerie, achats ; formules de totaux.
+- [x] Variantes « structure modifiée » : colonne ajoutée, onglet renommé, colonnes déplacées.
+- [x] Génération déterministe (mêmes octets pour une même graine) avec `pnpm generer:jeu`.
+- [x] Résultats attendus calculés depuis le modèle (oracle), et recoupés en relisant chaque source par un chemin indépendant. Ce recoupement remplace la saisie manuelle des valeurs attendues prévue au départ.
+- [ ] Ouvrir le `.xlsm` généré dans Excel, sur un poste équipé.
+- [ ] Plus tard : balance et suivi des coûts projet (marge par affaire), non couverts pour l'instant.
+- **Terminée quand** : au moins 5 couples source → reporting attendu, dont 2 avec macros, et 3 variantes de structure. → **6 cas de remplissage dont 2 avec macros, 3 variantes** (vérifié par un test).
 
 ### Phase 1 — Socle : Excel → Excel (reporting direction)
 
@@ -111,4 +114,9 @@ Faute de fichiers en amont, la démo doit prouver que l'outil s'adapte à un fic
 
 ## Pièges rencontrés
 
-_(symptôme, cause, contournement, lien)_
+| Symptôme                                                                    | Cause                                                                                                                                       | Contournement                                                               |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `unmet peer typescript` à l'installation, puis erreurs de typescript-eslint | TypeScript 7 (compilateur natif) s'installe par défaut ; typescript-eslint et le vérificateur TypeScript de Stryker ne le gèrent pas encore | Version imposée `~6.0.0` via `overrides` dans `pnpm-workspace.yaml`         |
+| `Cannot find Checker plugin "typescript"`                                   | Avec pnpm, Stryker ne découvre pas ses plugins tout seul                                                                                    | Liste `plugins` explicite dans `stryker.config.json`                        |
+| Impossible de créer un projet VBA sans Excel                                | Le format `vbaProject.bin` est binaire et non documenté pour l'écriture simple                                                              | Réutiliser un `vbaProject.bin` produit par Excel (XlsxWriter, BSD-2-Clause) |
+| Deux générations d'un même `.xlsx` diffèrent                                | ExcelJS et JSZip datent les fichiers à l'heure courante                                                                                     | Dates figées et ordre stable dans `normaliserArchive`                       |
