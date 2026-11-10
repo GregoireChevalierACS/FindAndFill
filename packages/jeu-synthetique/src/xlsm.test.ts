@@ -1,7 +1,8 @@
 import JSZip from 'jszip';
 import { describe, expect, it } from 'vitest';
 import { lireTexte, normaliserArchive } from './normaliser.js';
-import { convertirEnXlsm } from './xlsm.js';
+import { readFile } from 'node:fs/promises';
+import { convertirEnXlsm, lireProjetVbaExemple } from './xlsm.js';
 
 const TYPE_CLASSEUR = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml';
 
@@ -68,5 +69,12 @@ describe('normaliserArchive', () => {
     expect(Object.keys(resultat.files)).toEqual(['[Content_Types].xml', 'a.xml', 'b.xml']);
     const dates = new Set(Object.values(resultat.files).map((f) => f.date.getTime()));
     expect(dates.size).toBe(1);
+  });
+});
+
+describe('lireProjetVbaExemple', () => {
+  it('redonne exactement ressources/vbaProject.bin (sinon : node scripts/encoder-projet-vba.mjs)', async () => {
+    const fichier = await readFile(new URL('../ressources/vbaProject.bin', import.meta.url));
+    expect(await lireProjetVbaExemple()).toEqual(new Uint8Array(fichier));
   });
 });

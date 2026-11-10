@@ -27,7 +27,7 @@ export type Preparation =
       readonly cellules: readonly CelluleARemplir[];
       readonly avertissements: readonly Avertissement[];
       /** Écrit le gabarit rempli. Rien n'est écrit tant que l'utilisateur n'a pas confirmé. */
-      confirmer(): Promise<Uint8Array>;
+      readonly confirmer: () => Promise<Uint8Array>;
     };
 
 function detail(erreur: unknown): string {

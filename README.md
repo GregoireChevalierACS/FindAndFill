@@ -14,10 +14,13 @@ pnpm install
 pnpm verifier        # formatage, lint, types, tests et couverture
 pnpm test:mutation   # tests de mutation du domaine
 pnpm generer:jeu     # jeu de données synthétique dans donnees-synthetiques/
+pnpm dev             # application de bureau en mode développement
+pnpm test:e2e        # construit l'application et rejoue le parcours utilisateur (Playwright)
 ```
 
 | Paquet                                                   | Rôle                                                                                                        |
 | -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| [apps/desktop](apps/desktop)                             | Application de bureau Electron + React                                                                      |
 | [packages/domain](packages/domain)                       | Règles métier pures, sans aucune dépendance : montants, dates, repérage des tableaux, calcul du remplissage |
 | [packages/application](packages/application)             | Cas d'usage et ports (contrats des adapters)                                                                |
 | [packages/adapters-fichiers](packages/adapters-fichiers) | Lecture Excel/CSV/FEC, écriture des gabarits Excel par retouche du XML                                      |
