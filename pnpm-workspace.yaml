@@ -9,3 +9,7 @@ onlyBuiltDependencies:
 # Une seule version de TypeScript : typescript-eslint et Stryker ne gèrent pas encore TypeScript 7 (natif).
 overrides:
   typescript: ~6.0.0
+  # Alertes Dependabot sur des dépendances indirectes (voir feuille-de-route.md, « Pièges rencontrés »).
+  uuid@<11.1.1: ^11.1.1
+  minimatch@>=7 <11.0.1: ^11.0.1
+  qs@<6.16.1: ^6.16.1
