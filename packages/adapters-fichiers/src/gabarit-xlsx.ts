@@ -178,7 +178,30 @@ function cheminCible(cible: string): string {
   return cible.startsWith('/') ? cible.slice(1) : `xl/${cible}`;
 }
 
-export async function ouvrirGabaritXlsx(octets: Uint8Array): Promise<GabaritOuvert> {
+/** Cellule d'une grille d'aperçu : texte affiché, et formule à ne jamais écraser. */
+export interface CelluleGrille {
+  readonly texte: string;
+  readonly formule: boolean;
+}
+
+/** Gabarit Excel ouvert, avec en plus une grille d'aperçu pour l'éditeur de modèle. */
+export interface GabaritXlsx extends GabaritOuvert {
+  /** Les premières lignes et colonnes d'un onglet, à partir de A1. Vide pour un onglet inconnu. */
+  grille(onglet: string, lignes: number, colonnes: number): CelluleGrille[][];
+}
+
+function celluleGrille(cellule: CelluleXml | undefined, chaines: readonly string[]): CelluleGrille {
+  if (cellule === undefined) {
+    return { texte: '', formule: false };
+  }
+  const formule = /<f\b[^>]*>([\s\S]*?)<\/f>/.exec(cellule.contenu ?? '');
+  if (formule !== null || nature(cellule) === 'formule') {
+    return { texte: `=${decoderEntites(formule?.[1] ?? '…')}`, formule: true };
+  }
+  return { texte: texteCellule(cellule, chaines), formule: false };
+}
+
+export async function ouvrirGabaritXlsx(octets: Uint8Array): Promise<GabaritXlsx> {
   const zip = await JSZip.loadAsync(octets);
   const classeurXml = await lireTexte(zip, 'xl/workbook.xml');
   const relations = new Map(
@@ -234,6 +257,21 @@ export async function ouvrirGabaritXlsx(octets: Uint8Array): Promise<GabaritOuve
       return resultat;
     },
     contenu: (onglet, reference) => nature(cellule(onglet, reference)),
+    grille(onglet, lignes, colonnes) {
+      const feuille = feuilles.get(onglet);
+      if (feuille === undefined) {
+        return [];
+      }
+      return Array.from({ length: lignes }, (_, l) => {
+        const ligne = feuille.lignes.get(l + 1);
+        return Array.from({ length: colonnes }, (_, c) =>
+          celluleGrille(
+            ligne?.cellules.find((cellule) => cellule.colonne === c + 1),
+            chaines,
+          ),
+        );
+      });
+    },
     async ecrire(cellules: readonly CelluleARemplir[]): Promise<Uint8Array> {
       const copie = await JSZip.loadAsync(octets);
       const parOnglet = new Map<string, Map<string, number>>();
@@ -255,11 +293,11 @@ export async function ouvrirGabaritXlsx(octets: Uint8Array): Promise<GabaritOuve
   };
 }
 
-export const ouvreurGabaritXlsx: OuvreurGabarit = {
-  async ouvrir(fichier: FichierEntrant): Promise<GabaritOuvert> {
+export const ouvreurGabaritXlsx = {
+  async ouvrir(fichier: FichierEntrant): Promise<GabaritXlsx> {
     if (!/\.(xlsx|xlsm)$/i.test(fichier.nom)) {
       throw new Error(`Le gabarit doit être un classeur .xlsx ou .xlsm : « ${fichier.nom} ».`);
     }
     return ouvrirGabaritXlsx(fichier.octets);
   },
-};
+} satisfies OuvreurGabarit;

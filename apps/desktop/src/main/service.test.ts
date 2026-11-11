@@ -1,8 +1,15 @@
-import type { GabaritOuvert, LecteurSources, OuvreurGabarit } from '@findandfill/application';
+import type { GabaritXlsx } from '@findandfill/adapters-fichiers';
+import type { LecteurSources } from '@findandfill/application';
 import type { ModeleRemplissage } from '@findandfill/domain';
 import { join } from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
-import { cheminPropose, creerService, type DependancesService } from './service.js';
+import {
+  APERCU,
+  cheminPropose,
+  creerService,
+  nomDeFichierModele,
+  type DependancesService,
+} from './service.js';
 
 const MODELE: ModeleRemplissage = {
   nom: 'Test',
@@ -19,8 +26,12 @@ const MODELE: ModeleRemplissage = {
   ],
 };
 
-const gabarit: GabaritOuvert = {
+const gabarit: GabaritXlsx = {
   onglets: () => ['R'],
+  grille: (_onglet, lignes, colonnes) =>
+    Array.from({ length: lignes }, () =>
+      Array.from({ length: colonnes }, () => ({ texte: '', formule: false })),
+    ),
   colonne: () => new Map(),
   contenu: () => 'vide',
   ecrire: () => Promise.resolve(new Uint8Array([9])),
@@ -32,7 +43,7 @@ function dependances(surcharges: Partial<DependancesService> = {}) {
   const lecteur: LecteurSources = {
     lire: () => Promise.resolve({ feuilles: [{ nom: '', lignes: [['Montant'], [12]] }] }),
   };
-  const ouvreur: OuvreurGabarit = { ouvrir: () => Promise.resolve(gabarit) };
+  const ouvreur: DependancesService['ouvreur'] = { ouvrir: () => Promise.resolve(gabarit) };
   const base: DependancesService = {
     lireFichier: (chemin) =>
       chemin.includes('absent')
@@ -206,6 +217,93 @@ describe('preparer puis confirmer', () => {
     expect(await service.ouvrirModele('m.json')).toEqual({
       ok: false,
       message: 'Fichier de modèle illisible : refus',
+    });
+  });
+});
+
+describe('nomDeFichierModele', () => {
+  it.each([
+    ['Reporting direction 2026', 'reporting-direction-2026.json'],
+    ['Trésorerie (FEC) — mensuelle', 'tresorerie-fec-mensuelle.json'],
+    ['  !!  ', 'modele.json'],
+  ])('%s → %s', (nom, attendu) => {
+    expect(nomDeFichierModele(nom)).toBe(attendu);
+  });
+});
+
+describe('aperçus pour l’éditeur', () => {
+  it('donne le début de chaque feuille et la ligne d’en-têtes proposée', async () => {
+    const lignes = Array.from({ length: APERCU.lignesSource + 5 }, (_, i) =>
+      Array.from({ length: APERCU.colonnesSource + 3 }, (_, j) => (i === 2 ? `C${j}` : j)),
+    );
+    const service = creerService(
+      dependances({
+        lecteur: { lire: () => Promise.resolve({ feuilles: [{ nom: 'Ventes', lignes }] }) },
+      }).deps,
+    );
+    const apercu = await service.apercuSource('ventes.xlsx');
+    if (!apercu.ok) throw new Error(apercu.message);
+    const [feuille] = apercu.feuilles;
+    expect(feuille?.nom).toBe('Ventes');
+    expect(feuille?.lignes).toHaveLength(APERCU.lignesSource);
+    expect(feuille?.lignes[0]).toHaveLength(APERCU.colonnesSource);
+    expect(feuille?.ligneEntetesProposee).toBe(2);
+  });
+
+  it('signale une source illisible', async () => {
+    const service = creerService(dependances().deps);
+    expect(await service.apercuSource('absent.csv')).toEqual({
+      ok: false,
+      message: 'Impossible de lire ce fichier : ENOENT: absent.csv',
+    });
+  });
+
+  it('donne la grille de chaque onglet du gabarit', async () => {
+    const apercu = await creerService(dependances().deps).apercuGabarit('reporting.xlsx');
+    if (!apercu.ok) throw new Error(apercu.message);
+    expect(apercu.onglets.map((o) => o.nom)).toEqual(['R']);
+    expect(apercu.onglets[0]?.grille).toHaveLength(APERCU.lignesGabarit);
+    expect(apercu.onglets[0]?.grille[0]).toHaveLength(APERCU.colonnesGabarit);
+  });
+
+  it('signale un gabarit illisible', async () => {
+    expect(await creerService(dependances().deps).apercuGabarit('absent.xlsx')).toEqual({
+      ok: false,
+      message: 'Impossible d’ouvrir ce gabarit : ENOENT: absent.xlsx',
+    });
+  });
+});
+
+describe('enregistrerModele', () => {
+  it('propose un nom tiré du modèle et écrit un JSON lisible', async () => {
+    const { deps, ecrits } = dependances();
+    const service = creerService(deps);
+    expect(await service.enregistrerModele(MODELE)).toEqual({
+      statut: 'enregistre',
+      chemin: 'test.json',
+    });
+    expect(deps.demanderEnregistrement).toHaveBeenCalledWith('test.json', 'modele');
+    const texte = new TextDecoder().decode(ecrits.get('test.json'));
+    expect(texte.endsWith('}\n')).toBe(true);
+    expect(JSON.parse(texte)).toEqual(MODELE);
+    expect(await service.ouvrirModele('test.json')).toEqual({ ok: true, modele: MODELE });
+  });
+
+  it('refuse un modèle incomplet, respecte l’annulation et signale un échec d’écriture', async () => {
+    expect(await creerService(dependances().deps).enregistrerModele({ nom: '' })).toMatchObject({
+      statut: 'erreur',
+      message: expect.stringMatching(/^Modèle incomplet : /) as unknown,
+    });
+    const annule = creerService(
+      dependances({ demanderEnregistrement: () => Promise.resolve(null) }).deps,
+    );
+    expect(await annule.enregistrerModele(MODELE)).toEqual({ statut: 'annule' });
+    const bloque = creerService(
+      dependances({ ecrireFichier: () => Promise.reject(new Error('EACCES')) }).deps,
+    );
+    expect(await bloque.enregistrerModele(MODELE)).toEqual({
+      statut: 'erreur',
+      message: 'Enregistrement impossible : EACCES',
     });
   });
 });

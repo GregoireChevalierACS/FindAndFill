@@ -210,3 +210,158 @@ td {
 .erreur-texte {
   color: var(--erreur);
 }
+
+/* Navigation et éditeur de modèle */
+header nav {
+  margin-top: 12px;
+}
+
+.onglets-gabarit {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin: 8px 0;
+}
+
+button.onglet {
+  background: transparent;
+  color: var(--texte);
+  border-color: var(--bordure);
+}
+
+button.onglet.actif {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-texte);
+}
+
+.carte {
+  border: 1px solid var(--bordure);
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.carte p {
+  margin: 8px 0;
+}
+
+.ligne-champs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+  margin-bottom: 8px;
+}
+
+.ligne-champs label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--discret);
+}
+
+input,
+select {
+  font: inherit;
+  color: var(--texte);
+  background: var(--surface);
+  border: 1px solid var(--bordure);
+  border-radius: 6px;
+  padding: 6px 8px;
+  min-width: 0;
+}
+
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+fieldset {
+  border: 1px solid var(--bordure);
+  border-radius: 6px;
+  margin: 8px 0;
+  padding: 8px 12px;
+}
+
+legend {
+  font-weight: 600;
+  padding: 0 4px;
+}
+
+.avec-bouton {
+  display: flex;
+  gap: 4px;
+  align-items: flex-end;
+}
+
+.avec-bouton input {
+  width: 90px;
+}
+
+button.vise {
+  padding: 4px 8px;
+  background: transparent;
+  color: var(--accent);
+}
+
+button.vise.actif {
+  background: var(--accent);
+  color: var(--accent-texte);
+}
+
+.grille-defilante {
+  overflow: auto;
+  max-height: 360px;
+  border: 1px solid var(--bordure);
+  border-radius: 6px;
+}
+
+.grille {
+  font-size: 12px;
+  width: auto;
+}
+
+.grille th {
+  position: sticky;
+  top: 0;
+  background: var(--fond);
+  color: var(--discret);
+  font-weight: 500;
+  text-align: center;
+}
+
+.grille tbody th {
+  position: sticky;
+  left: 0;
+}
+
+.grille td {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-left: 1px solid var(--bordure);
+}
+
+.grille tr.entetes td {
+  background: var(--avertissement-fond);
+  font-weight: 600;
+}
+
+.grille tbody tr {
+  cursor: pointer;
+}
+
+.grille td.formule {
+  color: var(--discret);
+  background: var(--fond);
+  font-style: italic;
+}
+
+.en-visee .grille td:hover {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
