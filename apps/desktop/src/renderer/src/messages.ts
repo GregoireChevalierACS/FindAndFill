@@ -3,6 +3,7 @@ import {
   type Avertissement,
   type ChangementStructure,
   type ModeleRemplissage,
+  type ProblemeModele,
 } from '@findandfill/domain';
 import type { ErreurInterface } from '../../shared/api.js';
 
@@ -152,5 +153,34 @@ export function decrireAvertissement(
     }
     case 'hors-periode':
       return `${resumerLignes(avertissement.lignes)} hors de l’exercice ${modele?.annee ?? ''} ignorée(s) (règle « ${avertissement.regle} »).`;
+  }
+}
+
+/** Problème d'un modèle en cours de saisie, signalé par l'éditeur. */
+export function decrireProbleme(probleme: ProblemeModele, modele: ModeleRemplissage): string {
+  const libelle = (id: string) => modele.sources.find((s) => s.id === id)?.libelle ?? id;
+  switch (probleme.nature) {
+    case 'aucune-source':
+      return 'Ajoutez au moins une source.';
+    case 'aucune-regle':
+      return 'Ajoutez au moins une règle.';
+    case 'identifiant-en-double':
+      return probleme.quoi === 'source'
+        ? `Deux sources ont l’identifiant « ${probleme.id} ».`
+        : `Deux règles ont l’identifiant « ${probleme.id} » : renommez l’une d’elles.`;
+    case 'entetes-vides':
+      return `« ${libelle(probleme.source)} » : choisissez sa ligne d’en-têtes.`;
+    case 'entete-en-double':
+      return `« ${libelle(probleme.source)} » : l’en-tête « ${probleme.entete} » apparaît deux fois ; choisissez une autre ligne ou corrigez le fichier.`;
+    case 'source-inconnue':
+      return probleme.source === ''
+        ? `Règle « ${probleme.regle} » : choisissez sa source.`
+        : `Règle « ${probleme.regle} » : la source « ${probleme.source} » n’existe plus.`;
+    case 'colonne-inconnue':
+      return probleme.colonne === ''
+        ? `Règle « ${probleme.regle} » : une colonne reste à choisir.`
+        : `Règle « ${probleme.regle} » : la colonne « ${probleme.colonne} » est absente des en-têtes de sa source.`;
+    case 'cible-invalide':
+      return `Règle « ${probleme.regle} » : « ${probleme.valeur} » n’est pas une valeur valide pour ${probleme.champ}.`;
   }
 }

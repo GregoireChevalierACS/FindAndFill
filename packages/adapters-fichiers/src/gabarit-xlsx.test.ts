@@ -213,3 +213,38 @@ describe('ouvrirGabaritXlsx — écriture', () => {
     );
   });
 });
+
+describe('ouvrirGabaritXlsx — grille d’aperçu', () => {
+  const vide = { texte: '', formule: false };
+
+  it('donne textes et formules à partir de A1, cellules absentes vides', async () => {
+    const gabarit = await ouvrirGabaritXlsx(await archive(PARTIES));
+    const grille = gabarit.grille('CA & marge', 6, 5);
+    expect(grille).toHaveLength(6);
+    expect(grille[0]).toEqual([vide, vide, vide, vide, vide]);
+    expect(grille[2]).toEqual([
+      { texte: 'AF1', formule: false },
+      vide,
+      vide,
+      { texte: 'AF2', formule: false },
+      vide,
+    ]);
+    expect(grille[4]?.[0]).toEqual({ texte: 'AF3', formule: false });
+    expect(grille[5]?.[2]).toEqual({ texte: '=SUM(C3:C5)', formule: true });
+  });
+
+  it('montre une formule partagée sans texte, décode les entités, ignore un onglet inconnu', async () => {
+    const feuille =
+      '<worksheet><sheetData><row r="1"><c r="A1"><f t="shared" si="0"/><v>1</v></c><c r="B1"><f>IF(A1&gt;0,1,0)</f></c></row></sheetData></worksheet>';
+    const gabarit = await ouvrirGabaritXlsx(
+      await archive({ ...PARTIES, 'xl/worksheets/sheet1.xml': feuille }),
+    );
+    expect(gabarit.grille('CA & marge', 1, 2)).toEqual([
+      [
+        { texte: '=…', formule: true },
+        { texte: '=IF(A1>0,1,0)', formule: true },
+      ],
+    ]);
+    expect(gabarit.grille('Inconnu', 3, 3)).toEqual([]);
+  });
+});

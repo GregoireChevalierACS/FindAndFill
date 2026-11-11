@@ -30,11 +30,11 @@ const service = creerService({
   creerJeton: randomUUID,
   lecteur: lecteurSources,
   ouvreur: ouvreurGabaritXlsx,
-  async demanderEnregistrement(cheminPropose) {
+  async demanderEnregistrement(cheminPropose, type) {
     const options: Electron.SaveDialogOptions = {
-      title: 'Enregistrer le reporting rempli',
+      title: type === 'modele' ? 'Enregistrer le modèle' : 'Enregistrer le reporting rempli',
       defaultPath: cheminPropose,
-      filters: FILTRES.gabarit,
+      filters: FILTRES[type],
     };
     const fenetre = fenetreActive();
     const { canceled, filePath } = fenetre
@@ -60,6 +60,13 @@ ipcMain.handle(CANAUX.ouvrirModele, (_evenement, chemin: string) => service.ouvr
 ipcMain.handle(CANAUX.preparer, (_evenement, demande: unknown) => service.preparer(demande));
 ipcMain.handle(CANAUX.confirmer, (_evenement, jeton: unknown) => service.confirmer(jeton));
 ipcMain.handle(CANAUX.chargerDemonstration, () => preparerDemonstration(tmpdir()));
+ipcMain.handle(CANAUX.apercuSource, (_evenement, chemin: unknown) => service.apercuSource(chemin));
+ipcMain.handle(CANAUX.apercuGabarit, (_evenement, chemin: unknown) =>
+  service.apercuGabarit(chemin),
+);
+ipcMain.handle(CANAUX.enregistrerModele, (_evenement, modele: unknown) =>
+  service.enregistrerModele(modele),
+);
 
 function creerFenetre(): void {
   const fenetre = new BrowserWindow({

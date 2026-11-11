@@ -8,6 +8,9 @@ const api: ApiFindAndFill = {
   preparer: (demande) => ipcRenderer.invoke(CANAUX.preparer, demande),
   confirmer: (jeton) => ipcRenderer.invoke(CANAUX.confirmer, jeton),
   chargerDemonstration: () => ipcRenderer.invoke(CANAUX.chargerDemonstration),
+  apercuSource: (chemin) => ipcRenderer.invoke(CANAUX.apercuSource, chemin),
+  apercuGabarit: (chemin) => ipcRenderer.invoke(CANAUX.apercuGabarit, chemin),
+  enregistrerModele: (modele) => ipcRenderer.invoke(CANAUX.enregistrerModele, modele),
 };
 
 contextBridge.exposeInMainWorld('findAndFill', api);

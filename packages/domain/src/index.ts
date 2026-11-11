@@ -10,7 +10,9 @@ export {
 } from './colonnes.js';
 export { anneeDe, lireDate, moisDe, type DateIso } from './dates.js';
 export {
+  empreinteDeLigne,
   LIGNES_EXPLOREES,
+  proposerLigneEntetes,
   repererTableau,
   type ChangementStructure,
   type EmpreinteSource,
@@ -37,3 +39,4 @@ export {
   type ResultatRemplissage,
   type VueCible,
 } from './remplissage.js';
+export { verifierModele, type ProblemeModele } from './verification.js';

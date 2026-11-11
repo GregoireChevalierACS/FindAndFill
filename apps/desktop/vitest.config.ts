@@ -12,6 +12,7 @@ export default defineConfig({
         'src/main/schema-modele.ts',
         'src/main/demonstration.ts',
         'src/renderer/src/messages.ts',
+        'src/renderer/src/brouillon.ts',
       ],
       reporter: ['text', 'html'],
       thresholds: { lines: 100, functions: 100, branches: 95, statements: 100 },

@@ -1,4 +1,6 @@
 import { texteCellule, type Classeur, type Feuille } from './classeur.js';
+import { lireDate } from './dates.js';
+import { lireMontant } from './montant.js';
 
 /**
  * Ce que le modèle a retenu de la structure d'une source quand on l'a configuré :
@@ -127,4 +129,38 @@ export function repererTableau(classeur: Classeur, empreinte: EmpreinteSource): 
         ? [{ nature: 'entetes-introuvables' }]
         : comparer(empreinte.entetes, meilleure.entetes),
   };
+}
+
+/** Cellule de texte qui ressemble à un intitulé : ni montant, ni date. */
+function estIntitule(valeur: unknown): boolean {
+  if (typeof valeur !== 'string') {
+    return false;
+  }
+  const texte = texteCellule(valeur);
+  return texte !== '' && lireMontant(texte) === null && lireDate(texte) === null;
+}
+
+/**
+ * Propose la ligne d'en-têtes d'une feuille (indice à partir de 0) : parmi les premières lignes,
+ * celle qui compte le plus d'intitulés, la plus haute en cas d'égalité. `null` pour une feuille sans texte.
+ */
+export function proposerLigneEntetes(feuille: Feuille): number | null {
+  let meilleure: { ligne: number; score: number } | null = null;
+  for (const [ligne, valeurs] of feuille.lignes.slice(0, LIGNES_EXPLOREES).entries()) {
+    const score = valeurs.filter(estIntitule).length;
+    if (score > (meilleure?.score ?? 0)) {
+      meilleure = { ligne, score };
+    }
+  }
+  return meilleure?.ligne ?? null;
+}
+
+/** Empreinte d'une source à partir de la ligne d'en-têtes choisie par l'utilisateur. */
+export function empreinteDeLigne(
+  feuille: Feuille,
+  ligne: number,
+  onglet?: string,
+): EmpreinteSource {
+  const entetes = entetesDeLigne(feuille.lignes[ligne] ?? []);
+  return onglet === undefined ? { entetes } : { onglet, entetes };
 }
