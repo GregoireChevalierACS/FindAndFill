@@ -1,0 +1,37 @@
+{
+  "name": "@findandfill/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Application de bureau FindAndFill : remplir un reporting Excel à partir des exports comptables.",
+  "type": "module",
+  "main": "out/main/index.js",
+  "scripts": {
+    "dev": "node scripts/electron-vite.mjs dev",
+    "build": "electron-vite build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "electron-vite build && playwright test"
+  },
+  "dependencies": {
+    "@findandfill/adapters-fichiers": "workspace:*",
+    "@findandfill/application": "workspace:*",
+    "@findandfill/domain": "workspace:*",
+    "@findandfill/jeu-synthetique": "workspace:*",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.0",
+    "@types/node": "^24.19.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.3.0",
+    "electron": "^45.2.3",
+    "electron-vite": "^6.0.0",
+    "exceljs": "^4.4.0",
+    "jszip": "^3.10.2",
+    "vite": "^8.3.7"
+  }
+}

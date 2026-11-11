@@ -15,7 +15,9 @@
     "test:coverage": "pnpm -r test:coverage",
     "test:mutation": "pnpm -r test:mutation",
     "verifier": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test:coverage",
-    "generer:jeu": "pnpm --filter @findandfill/jeu-synthetique generer"
+    "generer:jeu": "pnpm --filter @findandfill/jeu-synthetique generer",
+    "test:e2e": "pnpm --filter @findandfill/desktop test:e2e",
+    "dev": "pnpm --filter @findandfill/desktop dev"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

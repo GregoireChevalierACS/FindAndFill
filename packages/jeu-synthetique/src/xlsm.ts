@@ -1,6 +1,6 @@
-import { readFile } from 'node:fs/promises';
 import type JSZip from 'jszip';
 import { lireTexte, normaliserArchive } from './normaliser.js';
+import { PROJET_VBA_BASE64 } from './projet-vba.js';
 
 const TYPE_CLASSEUR = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml';
 const TYPE_CLASSEUR_MACROS = 'application/vnd.ms-excel.sheet.macroEnabled.main+xml';
@@ -13,8 +13,8 @@ export const CHEMIN_PROJET_VBA = 'xl/vbaProject.bin';
  * voir ressources/LICENCE-XlsxWriter.txt). Il contient le module « Module1 »
  * avec la macro `say_hello`, et les modules de document ThisWorkbook, Sheet1 et Sheet2.
  */
-export async function lireProjetVbaExemple(): Promise<Uint8Array> {
-  return new Uint8Array(await readFile(new URL('../ressources/vbaProject.bin', import.meta.url)));
+export function lireProjetVbaExemple(): Promise<Uint8Array> {
+  return Promise.resolve(new Uint8Array(Buffer.from(PROJET_VBA_BASE64, 'base64')));
 }
 
 function remplacerUneFois(

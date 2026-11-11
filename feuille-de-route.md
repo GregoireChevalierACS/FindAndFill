@@ -80,9 +80,12 @@ Le besoin le plus visible : remplir les fichiers de reporting à partir des expo
 
 #### 1b — Application de bureau
 
-- [ ] Electron + React : choix des fichiers, aperçu des cellules avec leur provenance, confirmation, enregistrement du gabarit rempli.
+- [x] Electron + React (`apps/desktop`) : choix du modèle, des sources et du gabarit ; aperçu des cellules avec leur provenance ; confirmation puis enregistrement sous un autre nom (le gabarit d'origine reste vierge).
+- [x] Bouton « Charger la démonstration » : génère le jeu synthétique et pré-remplit le cas complet, pour une démo sans aucune donnée réelle.
+- [x] Message en français pour chaque erreur et avertissement, avec la marche à suivre.
+- [x] Sécurité : interface isolée (contextIsolation, sandbox, CSP), accès disque uniquement par le processus principal, modèle validé par zod.
+- [x] Tests de bout en bout Playwright sur l'application lancée (parcours complet, variante bloquée, aperçu effacé quand un fichier change), en CI sous xvfb.
 - [ ] Éditeur de modèle : choisir les colonnes sources et les cellules cibles, enregistrer le modèle.
-- [ ] Message clair pour chaque erreur et avertissement, avec la marche à suivre.
 
 - **Terminée quand** : la CI passe (100 % / mutation ≥ 80 %), tous les couples du jeu synthétique sont reproduits à l'identique, macros intactes, et chaque variante de structure est détectée — **atteint par le moteur** ; reste à le rendre utilisable sans ligne de commande (1b).
 

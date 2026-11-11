@@ -3,7 +3,15 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['**/dist/**', '**/coverage/**', '**/reports/**', '**/.stryker-tmp/**'],
+    ignores: [
+      '**/dist/**',
+      '**/out/**',
+      '**/coverage/**',
+      '**/reports/**',
+      '**/.stryker-tmp/**',
+      '**/playwright-report/**',
+      '**/test-results/**',
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.strictTypeChecked,
@@ -19,7 +27,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['**/*.js', '**/*.config.ts'],
+    files: ['**/*.js', '**/*.mjs', '**/*.config.ts'],
     ...tseslint.configs.disableTypeChecked,
   },
   {
