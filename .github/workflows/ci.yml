@@ -50,7 +50,7 @@ jobs:
         run: xvfb-run -a pnpm test:e2e
       - name: Rapport Playwright
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: rapport-playwright
           path: apps/desktop/playwright-report/
@@ -71,7 +71,7 @@ jobs:
       - run: pnpm test:mutation
       - name: Rapport de mutation
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: rapport-mutation
           path: packages/*/reports/mutation/
