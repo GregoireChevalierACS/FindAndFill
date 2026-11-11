@@ -6,6 +6,9 @@ settings:
 
 overrides:
   typescript: ~6.0.0
+  uuid@<11.1.1: ^11.1.1
+  minimatch@>=7 <11.0.1: ^11.0.1
+  qs@<6.16.1: ^6.16.1
 
 importers:
 
@@ -806,6 +809,9 @@ packages:
     peerDependenciesMeta:
       '@types/node':
         optional: true
+
+  '@isaacs/nonrecursive-glob-match@1.1.0':
+    resolution: {integrity: sha512-GPm/Dbvk5RLmhRnxXIa7nTpK0xtl4E0wj0MslsuNiJ1FIROU+2+9lgUC/dgF7Ey4QCWhfEsgxilMRMCdHPfDfw==}
 
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
@@ -1997,9 +2003,9 @@ packages:
   minimalistic-assert@1.0.1:
     resolution: {integrity: sha512-UtJcAD4yEaGtjPezWuO9wC4nwUnVH/8/Im3yEHQP4b67cXlD/Qr9hdITCU1xDbSEXg2XKNaP8jsReV7vQd00/A==}
 
-  minimatch@10.2.6:
-    resolution: {integrity: sha512-vpLQEs+VLCr1nU0BXS07maYoFwlDAH0gngQuuttxIwutDFEMHq2blX+8vpgxDdK3J1PwjCJiep77OitTZ4Ll1A==}
-    engines: {node: 18 || 20 || >=22}
+  minimatch@11.0.7:
+    resolution: {integrity: sha512-Tnk+M9mPjqKDZlUd77eMSjPjhnlBIa1mABOwetMryIshUwi1YmOBdGFfQnHgn4Z8A66eLT8ENzJrxwYmKfqrZg==}
+    engines: {node: 20 || >=22}
 
   minimatch@3.1.5:
     resolution: {integrity: sha512-VgjWUsnnT6n+NUk6eZq77zeFdpW2LWDzP6zFGrCbHXiYNul5Dzqk2HHQ5uFH2DNW5Xbp8+jVzaeNt94ssEEl4w==}
@@ -2166,8 +2172,8 @@ packages:
     resolution: {integrity: sha512-+Owyggi9IxT1ePKGafcI87ubSmxol6smwJ+RAHDQlx9+9cPwFWDiKFFCPuWhr9ignlGpZ9vDQLw67N4dcTVFEA==}
     engines: {node: '>=20'}
 
-  qs@6.15.1:
-    resolution: {integrity: sha512-6YHEFRL9mfgcAvql/XhwTvf5jKcOiiupt2FiJxHkiX1z4j7WL8J/jRHYLluORvc1XxB5rV20KoeK00gVJamspg==}
+  qs@6.17.1:
+    resolution: {integrity: sha512-jd3COkaKVgGUW+ZHyEHCG9bH7RoaaiWuMgzsIBjUMVjLAaWGWpoUAVwljVvBHxRu/2qEHnadLGZrkutYUBPQJA==}
     engines: {node: '>=0.6'}
 
   react-dom@19.3.1:
@@ -2462,9 +2468,8 @@ packages:
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
-  uuid@8.3.2:
-    resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
-    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+  uuid@11.1.1:
+    resolution: {integrity: sha512-vIYxrBCC/N/K+Js3qSN88go7kIfNPssr/hHCesKCQNAjmgvYS2oqr69kIufEG+O4+PfezOH4EbIeHCfFov8ZgQ==}
     hasBin: true
 
   verkit@0.5.0:
@@ -3086,7 +3091,7 @@ snapshots:
     dependencies:
       '@eslint/object-schema': 3.0.5
       debug: 4.4.3
-      minimatch: 10.2.6
+      minimatch: 11.0.7
     transitivePeerDependencies:
       - supports-color
 
@@ -3263,6 +3268,8 @@ snapshots:
     optionalDependencies:
       '@types/node': 24.19.2
 
+  '@isaacs/nonrecursive-glob-match@1.1.0': {}
+
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
       '@jridgewell/sourcemap-codec': 1.6.0
@@ -3373,7 +3380,7 @@ snapshots:
       execa: 9.6.1
       json-rpc-2.0: 1.8.1
       lodash.groupby: 4.6.0
-      minimatch: 10.2.6
+      minimatch: 11.0.7
       mutation-server-protocol: 0.4.1
       mutation-testing-elements: 3.8.4
       mutation-testing-metrics: 3.8.4
@@ -3524,7 +3531,7 @@ snapshots:
       '@typescript-eslint/types': 8.72.2
       '@typescript-eslint/visitor-keys': 8.72.2
       debug: 4.4.3
-      minimatch: 10.2.6
+      minimatch: 11.0.7
       semver: 7.8.6
       tinyglobby: 0.2.17
       ts-api-utils: 2.5.0(typescript@6.0.3)
@@ -4049,7 +4056,7 @@ snapshots:
       imurmurhash: 0.1.4
       is-glob: 4.0.3
       json-stable-stringify-without-jsonify: 1.0.1
-      minimatch: 10.2.6
+      minimatch: 11.0.7
       natural-compare: 1.4.0
       optionator: 0.9.4
     transitivePeerDependencies:
@@ -4087,7 +4094,7 @@ snapshots:
       saxes: 5.0.1
       tmp: 0.2.7
       unzipper: 0.10.14
-      uuid: 8.3.2
+      uuid: 11.1.1
 
   execa@9.6.1:
     dependencies:
@@ -4563,8 +4570,9 @@ snapshots:
 
   minimalistic-assert@1.0.1: {}
 
-  minimatch@10.2.6:
+  minimatch@11.0.7:
     dependencies:
+      '@isaacs/nonrecursive-glob-match': 1.1.0
       brace-expansion: 5.0.12
 
   minimatch@3.1.5:
@@ -4701,8 +4709,9 @@ snapshots:
     dependencies:
       hookified: 2.2.0
 
-  qs@6.15.1:
+  qs@6.17.1:
     dependencies:
+      es-define-property: 1.0.1
       side-channel: 1.1.1
 
   react-dom@19.3.1(react@19.3.1):
@@ -5016,7 +5025,7 @@ snapshots:
     dependencies:
       des.js: 1.1.0
       js-md4: 0.3.2
-      qs: 6.15.1
+      qs: 6.17.1
       tunnel: 0.0.6
       underscore: 1.13.8
 
@@ -5085,7 +5094,7 @@ snapshots:
 
   util-deprecate@1.0.2: {}
 
-  uuid@8.3.2: {}
+  uuid@11.1.1: {}
 
   verkit@0.5.0: {}
 
