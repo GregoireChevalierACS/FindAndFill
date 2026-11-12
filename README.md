@@ -26,6 +26,16 @@ pnpm test:e2e        # construit l'application et rejoue le parcours utilisateur
 | [packages/adapters-fichiers](packages/adapters-fichiers) | Lecture Excel/CSV/FEC, écriture des gabarits Excel par retouche du XML                                      |
 | [packages/jeu-synthetique](packages/jeu-synthetique)     | Générateur de fichiers comptables fictifs et modèles de référence pour la recette                           |
 
+## Installer et publier
+
+```sh
+pnpm --filter @findandfill/desktop paquet   # installateur Windows dans apps/desktop/release/
+```
+
+Pour publier une version : mettre à jour `version` dans [apps/desktop/package.json](apps/desktop/package.json), fusionner, puis pousser le tag correspondant (`git tag v0.2.0 && git push origin v0.2.0`). Le workflow [Publication](.github/workflows/publication.yml) construit l'installateur sous Windows, rejoue les tests de bout en bout sur l'application empaquetée, puis crée la release GitHub ; les postes déjà installés se mettent à jour à la fermeture suivante.
+
+L'installateur n'est pas signé tant que les secrets `CSC_LINK` (certificat `.pfx` encodé en base64) et `CSC_KEY_PASSWORD` ne sont pas définis : Windows SmartScreen affiche alors un avertissement à l'installation.
+
 ## Contribuer
 
 `main` est protégée : toute modification passe par une branche et une pull request (fusion en squash, historique linéaire).

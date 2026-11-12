@@ -6,6 +6,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { CANAUX, type TypeFichier } from '../shared/api.js';
 import { preparerDemonstration } from './demonstration.js';
+import { verifierMisesAJour } from './mises-a-jour.js';
 import { creerService } from './service.js';
 
 const FILTRES: Record<TypeFichier, Electron.FileFilter[]> = {
@@ -101,6 +102,7 @@ function creerFenetre(): void {
 
 void app.whenReady().then(() => {
   creerFenetre();
+  verifierMisesAJour();
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       creerFenetre();

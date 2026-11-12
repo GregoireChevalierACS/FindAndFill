@@ -1,0 +1,39 @@
+# Empaquetage Windows de FindAndFill (electron-builder).
+# Tout le code est regroupé par electron-vite dans out/ : aucun node_modules n'est livré.
+appId: io.github.gregoirechevalieracs.findandfill
+productName: FindAndFill
+copyright: Copyright © 2026 Grégoire Chevalier
+
+directories:
+  output: release
+  buildResources: ressources
+
+files:
+  - out/**
+  - package.json
+
+# Pas de module natif : inutile de reconstruire quoi que ce soit.
+npmRebuild: false
+asar: true
+
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+  # Signature : electron-builder signe automatiquement si CSC_LINK et CSC_KEY_PASSWORD
+  # (certificat de l'organisation) sont fournis ; sinon l'installateur n'est pas signé.
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  shortcutName: FindAndFill
+  artifactName: FindAndFill-Setup-${version}.${ext}
+
+# Source des mises à jour automatiques : les Releases GitHub du dépôt (public, sans jeton).
+publish:
+  provider: github
+  owner: GregoireChevalierACS
+  repo: FindAndFill
+  releaseType: release

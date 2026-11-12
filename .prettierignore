@@ -7,3 +7,4 @@ out/
 playwright-report/
 test-results/
 packages/jeu-synthetique/src/projet-vba.ts
+release/
