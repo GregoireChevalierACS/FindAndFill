@@ -32,6 +32,13 @@ export default tseslint.config(
     ...tseslint.configs.disableTypeChecked,
   },
   {
+    // Scripts d'outillage exécutés par Node.
+    files: ['**/scripts/**/*.mjs'],
+    languageOptions: {
+      globals: { Buffer: 'readonly', URL: 'readonly', console: 'readonly', process: 'readonly' },
+    },
+  },
+  {
     // Le domaine ne dépend de rien d'extérieur : seuls les imports relatifs sont permis.
     files: ['packages/domain/src/**/*.ts'],
     ignores: ['**/*.test.ts'],
