@@ -96,7 +96,7 @@ Le besoin le plus visible : remplir les fichiers de reporting à partir des expo
 - [x] Mises à jour automatiques (electron-updater) depuis les releases GitHub, installées à la fermeture.
 - [x] Workflow « Publication » sur tag `vX.Y.Z` : construction sous Windows, tests de bout en bout sur l'exécutable empaqueté, publication de la release.
 - [ ] Signature du code : certificat de l'organisation à fournir (`CSC_LINK`, `CSC_KEY_PASSWORD`).
-- [ ] Icône de l'application (`apps/desktop/ressources/icon.ico`).
+- [x] Icône de l'application : `apps/desktop/ressources/icon.png`, générée par `apps/desktop/scripts/generer-icone.mjs`.
 - **Terminée quand** : une release publiée s'installe sur un poste Windows vierge, et la version suivante s'y installe d'elle-même.
 
 ### Phase 2 — Démo et essai réel chez Mecatherm

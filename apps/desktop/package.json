@@ -1,6 +1,6 @@
 {
   "name": "@findandfill/desktop",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Application de bureau FindAndFill : remplir un reporting Excel à partir des exports comptables.",
   "type": "module",
