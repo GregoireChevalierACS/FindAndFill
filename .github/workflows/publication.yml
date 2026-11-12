@@ -1,0 +1,82 @@
+name: Publication
+
+# Un tag vX.Y.Z construit l'installateur Windows, le teste, puis publie la release
+# dont se servent les mises à jour automatiques.
+# Lancé à la main (workflow_dispatch), il construit et teste sans rien publier.
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publication-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  windows:
+    name: Installateur Windows
+    runs-on: windows-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Vérifier que le tag correspond à la version de l'application
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: bash
+        run: |
+          version="v$(node -p "require('./apps/desktop/package.json').version")"
+          if [ "$version" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Le tag $GITHUB_REF_NAME ne correspond pas à la version $version de apps/desktop/package.json."
+            exit 1
+          fi
+
+      - name: Construire l'installateur
+        run: pnpm --filter @findandfill/desktop paquet
+        env:
+          # Certificat de signature de l'organisation, s'il a été fourni en secret ; sinon pas de signature.
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+
+      - name: Tester l'application empaquetée (Playwright)
+        run: pnpm --filter @findandfill/desktop test:paquet
+        env:
+          FINDANDFILL_EXECUTABLE: ${{ github.workspace }}\apps\desktop\release\win-unpacked\FindAndFill.exe
+
+      - name: Rapport Playwright
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: rapport-playwright-windows
+          path: apps/desktop/playwright-report/
+          if-no-files-found: ignore
+
+      - name: Conserver l'installateur
+        uses: actions/upload-artifact@v7
+        with:
+          name: installateur-windows
+          path: |
+            apps/desktop/release/FindAndFill-Setup-*.exe
+            apps/desktop/release/FindAndFill-Setup-*.exe.blockmap
+            apps/desktop/release/latest.yml
+
+      - name: Publier la release
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            apps/desktop/release/FindAndFill-Setup-*.exe \
+            apps/desktop/release/FindAndFill-Setup-*.exe.blockmap \
+            apps/desktop/release/latest.yml \
+            --title "FindAndFill $GITHUB_REF_NAME" \
+            --generate-notes

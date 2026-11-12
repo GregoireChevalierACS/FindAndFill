@@ -89,6 +89,16 @@ Le besoin le plus visible : remplir les fichiers de reporting à partir des expo
 
 - **Terminée quand** : la CI passe (100 % / mutation ≥ 80 %), tous les couples du jeu synthétique sont reproduits à l'identique, macros intactes, et chaque variante de structure est détectée — **atteint par le moteur** ; reste à le rendre utilisable sans ligne de commande (1b).
 
+### Phase 1c — Installateur et mises à jour
+
+- [x] Installateur Windows NSIS (electron-builder), installable sans droits d'administrateur, raccourci sur le bureau.
+- [x] Paquet minimal : tout le code est regroupé par electron-vite, l'archive ne contient que `out/` et `package.json` (11 entrées, aucun `node_modules`).
+- [x] Mises à jour automatiques (electron-updater) depuis les releases GitHub, installées à la fermeture.
+- [x] Workflow « Publication » sur tag `vX.Y.Z` : construction sous Windows, tests de bout en bout sur l'exécutable empaqueté, publication de la release.
+- [ ] Signature du code : certificat de l'organisation à fournir (`CSC_LINK`, `CSC_KEY_PASSWORD`).
+- [ ] Icône de l'application (`apps/desktop/ressources/icon.ico`).
+- **Terminée quand** : une release publiée s'installe sur un poste Windows vierge, et la version suivante s'y installe d'elle-même.
+
 ### Phase 2 — Démo et essai réel chez Mecatherm
 
 Faute de fichiers en amont, la démo doit prouver que l'outil s'adapte à un fichier inconnu.

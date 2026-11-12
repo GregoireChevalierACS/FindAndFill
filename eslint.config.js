@@ -6,6 +6,7 @@ export default tseslint.config(
     ignores: [
       '**/dist/**',
       '**/out/**',
+      '**/release/**',
       '**/coverage/**',
       '**/reports/**',
       '**/.stryker-tmp/**',
