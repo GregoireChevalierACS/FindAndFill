@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "@findandfill/jeu-synthetique": "workspace:*",
-    "@types/node": "^24.19.2",
+    "@types/node": "^26.6.10",
     "@types/pdfkit": "^0.17.7",
     "pdfkit": "^0.21.0"
   }
