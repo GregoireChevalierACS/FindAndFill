@@ -193,6 +193,32 @@ describe('lirePdfParZones', () => {
       }
     });
 
+    it('admet, pour une ancre, sa propre tolérance à la place de celle du modèle', () => {
+      const plusBas = FACTURE.map((f) =>
+        f.texte.startsWith('Total') && f.y > 400 ? { ...f, y: f.y + 100 } : f,
+      ).map((f) => (f.texte.endsWith('€') ? { ...f, y: f.y + 100 } : f));
+      const tolerant = (tolerance: number): ModeleDeLecturePdf => ({
+        ...MODELE,
+        ancres: ANCRES.map((ancre) =>
+          ancre.id === 'ttc' || ancre.id === 'ht' ? { ...ancre, tolerance } : ancre,
+        ),
+      });
+      expect(lirePdfParZones(pdf(...plusBas), tolerant(100))).toMatchObject({
+        ok: true,
+        champs: { totalTtc: { valeur: 120000 } },
+      });
+      expect(lirePdfParZones(pdf(...plusBas), tolerant(99))).toMatchObject({
+        ok: false,
+        changements: [{ ancre: 'ht' }, { ancre: 'ttc' }],
+      });
+      // La tolérance propre ne vaut que pour son ancre.
+      const titreDecale = FACTURE.map((f) => (f.texte === 'FACTURE' ? { ...f, y: 120 } : f));
+      expect(lirePdfParZones(pdf(...titreDecale), tolerant(100))).toMatchObject({
+        ok: false,
+        changements: [{ ancre: 'titre' }],
+      });
+    });
+
     it('signale une ancre passée sur une autre page', () => {
       const ailleurs = FACTURE.map((f) => (f.texte === 'FACTURE' ? { ...f, page: 2 } : f));
       expect(lirePdfParZones(pdf(...ailleurs), MODELE)).toMatchObject({
@@ -423,6 +449,19 @@ describe('verifierModeleDeLecturePdf', () => {
       { nature: 'ancre-en-double', ancre: 'a' },
       { nature: 'ancre-vide', ancre: 'b' },
     ]);
+  });
+
+  it.each([-1, Number.NaN])('refuse la tolérance %d d’une ancre', (tolerance) => {
+    const ancres = ANCRES.map((ancre) => (ancre.id === 'ttc' ? { ...ancre, tolerance } : ancre));
+    expect(verifierModeleDeLecturePdf({ ...MODELE, ancres })).toEqual([
+      { nature: 'tolerance-invalide', tolerance, ancre: 'ttc' },
+    ]);
+    expect(
+      verifierModeleDeLecturePdf({
+        ...MODELE,
+        ancres: ANCRES.map((ancre) => ({ ...ancre, tolerance: 0 })),
+      }),
+    ).toEqual([]);
   });
 
   it('signale un champ après une ancre inconnue', () => {

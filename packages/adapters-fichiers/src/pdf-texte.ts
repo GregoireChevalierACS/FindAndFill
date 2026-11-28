@@ -1,6 +1,11 @@
 import type { FichierEntrant, LecteurPdf } from '@findandfill/application';
 import type { FragmentDeTexte, TexteDuPdf } from '@findandfill/domain';
 import { getDocument, VerbosityLevel } from 'pdfjs-dist/legacy/build/pdf.mjs';
+// Le « worker » de pdf.js, importé pour son effet : il s'inscrit sur globalThis.pdfjsWorker, où
+// pdf.js le cherche avant de le charger par un import() à l'exécution. Importé ici, il est
+// embarqué par les bundlers (service, application de bureau) au lieu d'être cherché à côté du
+// fichier groupé, où il n'est pas.
+import 'pdfjs-dist/legacy/build/pdf.worker.mjs';
 
 /** pdf.js type ses matrices en `any[]` : chaque coefficient est vérifié avant usage. */
 export function coefficients(
