@@ -41,6 +41,11 @@ export interface AncrePdf {
   readonly id: string;
   readonly texte: string;
   readonly position: Point;
+  /**
+   * Écart admis pour cette ancre, à la place de celui du modèle : pour un libellé dont la position
+   * varie d'un document à l'autre, comme les totaux sous un tableau au nombre de lignes variable.
+   */
+  readonly tolerance?: number;
 }
 
 /**
@@ -253,7 +258,7 @@ function repererLesAncres(
     }
     if (meilleure === undefined) {
       changements.push({ nature: 'ancre-introuvable', ancre: ancre.id, texte: ancre.texte });
-    } else if (meilleure.ecart > tolerance) {
+    } else if (meilleure.ecart > (ancre.tolerance ?? tolerance)) {
       const { page, x, y } = meilleure.fragment;
       changements.push({
         nature: 'ancre-deplacee',
@@ -313,6 +318,7 @@ export function lirePdfParZones(texte: TexteDuPdf, modele: ModeleDeLecturePdf): 
 export type ProblemeModelePdf =
   | { readonly nature: 'aucun-champ' }
   | { readonly nature: 'tolerance-invalide'; readonly tolerance: number }
+  | { readonly nature: 'tolerance-invalide'; readonly tolerance: number; readonly ancre: string }
   | { readonly nature: 'ancre-en-double'; readonly ancre: string }
   | { readonly nature: 'ancre-vide'; readonly ancre: string }
   | { readonly nature: 'ancre-inconnue'; readonly champ: string; readonly ancre: string }
@@ -321,18 +327,24 @@ export type ProblemeModelePdf =
 const rectangleValide = ({ page, largeur, hauteur }: Rectangle): boolean =>
   Number.isInteger(page) && page >= 1 && largeur > 0 && hauteur > 0;
 
+const toleranceValide = (tolerance: number): boolean =>
+  tolerance >= 0 && Number.isFinite(tolerance);
+
 /** Vérifications d'un modèle de lecture sans ouvrir aucun PDF. */
 export function verifierModeleDeLecturePdf(modele: ModeleDeLecturePdf): ProblemeModelePdf[] {
   const problemes: ProblemeModelePdf[] = [];
   const champs = Object.entries(modele.champs);
   if (champs.length === 0) problemes.push({ nature: 'aucun-champ' });
-  if (!(modele.tolerance >= 0 && Number.isFinite(modele.tolerance))) {
+  if (!toleranceValide(modele.tolerance)) {
     problemes.push({ nature: 'tolerance-invalide', tolerance: modele.tolerance });
   }
   const ids = new Set<string>();
   for (const ancre of modele.ancres) {
     if (ids.has(ancre.id)) problemes.push({ nature: 'ancre-en-double', ancre: ancre.id });
     ids.add(ancre.id);
+    if (ancre.tolerance !== undefined && !toleranceValide(ancre.tolerance)) {
+      problemes.push({ nature: 'tolerance-invalide', tolerance: ancre.tolerance, ancre: ancre.id });
+    }
     if (ancre.texte.trim() === '') problemes.push({ nature: 'ancre-vide', ancre: ancre.id });
   }
   for (const [nom, { zone }] of champs) {
