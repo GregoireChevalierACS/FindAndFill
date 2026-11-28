@@ -1,4 +1,4 @@
-import type { CelluleARemplir, Classeur, VueCible } from '@findandfill/domain';
+import type { CelluleARemplir, Classeur, TexteDuPdf, VueCible } from '@findandfill/domain';
 
 /** Un fichier fourni par l'utilisateur : son nom (pour l'extension et les messages) et son contenu. */
 export interface FichierEntrant {
@@ -19,4 +19,9 @@ export interface GabaritOuvert extends VueCible {
 
 export interface OuvreurGabarit {
   ouvrir(fichier: FichierEntrant): Promise<GabaritOuvert>;
+}
+
+/** Extrait le texte d'un PDF, fragment par fragment, avec sa position. Rejette si le fichier est illisible. */
+export interface LecteurPdf {
+  lire(fichier: FichierEntrant): Promise<TexteDuPdf>;
 }

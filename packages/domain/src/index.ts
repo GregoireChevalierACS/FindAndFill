@@ -40,3 +40,21 @@ export {
   type VueCible,
 } from './remplissage.js';
 export { verifierModele, type ProblemeModele } from './verification.js';
+export {
+  lirePdfParZones,
+  verifierModeleDeLecturePdf,
+  type AncrePdf,
+  type ChampLu,
+  type ChampPdf,
+  type ChangementDeMiseEnPage,
+  type ErreurDeChamp,
+  type FragmentDeTexte,
+  type ModeleDeLecturePdf,
+  type Point,
+  type ProblemeModelePdf,
+  type Rectangle,
+  type ResultatLecturePdf,
+  type TexteDuPdf,
+  type TypeDeChampPdf,
+  type ZonePdf,
+} from './lecture-pdf.js';

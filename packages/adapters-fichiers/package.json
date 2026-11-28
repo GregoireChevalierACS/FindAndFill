@@ -2,10 +2,11 @@
   "name": "@findandfill/adapters-fichiers",
   "version": "0.0.0",
   "private": true,
-  "description": "Adapters de fichiers : lecture Excel/CSV/FEC et écriture de gabarits Excel par retouche du XML.",
+  "description": "Adapters de fichiers : lecture Excel/CSV/FEC, écriture de gabarits Excel par retouche du XML, et texte des PDF (point d'entrée « /pdf », qui seul charge pdf.js).",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./pdf": "./src/pdf-texte.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
@@ -16,10 +17,13 @@
     "@findandfill/application": "workspace:*",
     "@findandfill/domain": "workspace:*",
     "exceljs": "^4.4.0",
-    "jszip": "^3.10.2"
+    "jszip": "^3.10.2",
+    "pdfjs-dist": "^6.5.438"
   },
   "devDependencies": {
     "@findandfill/jeu-synthetique": "workspace:*",
-    "@types/node": "^24.19.2"
+    "@types/node": "^24.19.2",
+    "@types/pdfkit": "^0.17.7",
+    "pdfkit": "^0.21.0"
   }
 }

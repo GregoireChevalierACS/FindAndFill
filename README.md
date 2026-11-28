@@ -23,7 +23,7 @@ pnpm test:e2e        # construit l'application et rejoue le parcours utilisateur
 | [apps/desktop](apps/desktop)                             | Application de bureau Electron + React                                                                      |
 | [packages/domain](packages/domain)                       | Règles métier pures, sans aucune dépendance : montants, dates, repérage des tableaux, calcul du remplissage |
 | [packages/application](packages/application)             | Cas d'usage et ports (contrats des adapters)                                                                |
-| [packages/adapters-fichiers](packages/adapters-fichiers) | Lecture Excel/CSV/FEC, écriture des gabarits Excel par retouche du XML                                      |
+| [packages/adapters-fichiers](packages/adapters-fichiers) | Lecture Excel/CSV/FEC, écriture des gabarits Excel par retouche du XML, texte des PDF (`/pdf`, pdf.js)      |
 | [packages/jeu-synthetique](packages/jeu-synthetique)     | Générateur de fichiers comptables fictifs et modèles de référence pour la recette                           |
 
 ## Installer et publier
