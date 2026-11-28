@@ -1,4 +1,10 @@
-export type { FichierEntrant, GabaritOuvert, LecteurSources, OuvreurGabarit } from './ports.js';
+export type {
+  FichierEntrant,
+  GabaritOuvert,
+  LecteurPdf,
+  LecteurSources,
+  OuvreurGabarit,
+} from './ports.js';
 export {
   preparerRemplissage,
   type DemandeRemplissage,
